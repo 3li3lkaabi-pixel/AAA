@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>ذكاء — المنصة الذكية المتكاملة</title>
+    <meta name="description" content="منصة ذكية متكاملة تعمل بالذكاء الاصطناعي لإدارة أعمالك" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="theme-color" content="#A0936B" />
+
+    <!-- Apple / iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="ذكاء" />
+    <link rel="apple-touch-icon" href="./icon-192x192.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="./icon-512x512.png" />
+
+    <!-- SEO / Social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ذكاء — المنصة الذكية المتكاملة" />
+    <meta property="og:description" content="منصة ذكية متكاملة تعمل بالذكاء الاصطناعي لإدارة أعمالك" />
+    <meta property="og:locale" content="ar_AR" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <!-- App bundle -->
+    <script type="module" crossorigin src="./assets/index-BNcSH6fZ.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BbEr-ZNJ.css" />
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- Service worker registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker
+            .register('./sw.js')
+            .then((reg) => {
+              // Reload once when a new SW takes control, so users get fresh assets.
+              let refreshing = false;
+              navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (refreshing) return;
+                refreshing = true;
+                window.location.reload();
+              });
+
+              reg.addEventListener('updatefound', () => {
+                const nw = reg.installing;
+                if (!nw) return;
+                nw.addEventListener('statechange', () => {
+                  if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+                    nw.postMessage({ type: 'SKIP_WAITING' });
+                  }
+                });
+              });
+            })
+            .catch((err) => console.error('SW registration failed:', err));
+        });
+      }
+    </script>
+  </body>
+</html>
